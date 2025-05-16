@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BPB24</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="title_activity_admin_entry">AdminEntry</string>
+    <string name="title_activity_admin_messages">AdminMessagesActivity</string>
+</resources>
