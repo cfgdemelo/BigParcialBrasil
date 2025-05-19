@@ -2,9 +2,9 @@ This sample application was created to test some technologies such as:
 
 - Jetpack Compose
 - Firebase Realtime Database
-- Loading images from url to Jetpack Compose
-- Creating and removing elements on the fly
-- Creating a simple row chart using only Jetpack Compose based on number of "votes" returning from Firebase
+- Loading images from url with Compose
+- Creating and removing Compose elements on the fly
+- Creating a simple row chart using only Compose based on number of "votes" returning from Firebase
 - Dark Mode
 - Play Store publication
 
