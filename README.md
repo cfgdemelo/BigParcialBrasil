@@ -1,3 +1,7 @@
+Application created to show votes intention about "Big Brother Brasil" reality show, where users could access and demonstrate in which reality show competitor would they vote.
+
+Everything presented on the screen comes from a Firebase Realtime Database, including texts, photos, votes options and so on.
+
 This sample application was created to test some technologies such as:
 
 - Jetpack Compose
