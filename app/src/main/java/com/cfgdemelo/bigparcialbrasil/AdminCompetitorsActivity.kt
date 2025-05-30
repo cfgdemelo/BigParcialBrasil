@@ -1,5 +1,6 @@
 package com.cfgdemelo.bigparcialbrasil
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
@@ -34,7 +35,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cfgdemelo.bigparcialbrasil.data.Messages
+import com.cfgdemelo.bigparcialbrasil.AdminCompetitorsActivity.Companion.COMPETITORS
+import com.cfgdemelo.bigparcialbrasil.AdminCompetitorsActivity.Companion.INDEX
+import com.cfgdemelo.bigparcialbrasil.AdminCompetitorsActivity.Companion.NAME
+import com.cfgdemelo.bigparcialbrasil.AdminCompetitorsActivity.Companion.PHOTO
+import com.cfgdemelo.bigparcialbrasil.AdminCompetitorsActivity.Companion.VOTES
+import com.cfgdemelo.bigparcialbrasil.AdminCompetitorsActivity.Companion.WALLED
 import com.cfgdemelo.bigparcialbrasil.data.Walled
 import com.cfgdemelo.bigparcialbrasil.ui.theme.BigParcialBrasilTheme
 import com.google.firebase.database.DataSnapshot
@@ -47,7 +53,6 @@ class AdminCompetitorsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BigParcialBrasilTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -57,12 +62,22 @@ class AdminCompetitorsActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        const val COMPETITORS = "competitors"
+        const val INDEX = "index"
+        const val NAME = "name"
+        const val PHOTO = "photo"
+        const val VOTES = "votes"
+        const val WALLED = "walled"
+    }
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun Admin(context: Context) {
     val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReferenceCompetitors = firebaseDatabase.getReference("competitors")
+    val databaseReferenceCompetitors = firebaseDatabase.getReference(COMPETITORS)
 
     val competitors = remember {
         mutableStateOf(ArrayList<Walled>())
@@ -75,11 +90,11 @@ fun Admin(context: Context) {
             value.forEach {
                 competitorsList.add(
                     Walled(
-                        index = it["index"].toString().toInt(),
-                        name = it["name"].toString(),
-                        photo = it["photo"].toString(),
-                        votes = it["votes"].toString().toInt(),
-                        walled = it["walled"].toString().toBoolean()
+                        index = it[INDEX].toString().toInt(),
+                        name = it[NAME].toString(),
+                        photo = it[PHOTO].toString(),
+                        votes = it[VOTES].toString().toInt(),
+                        walled = it[WALLED].toString().toBoolean()
                     )
                 )
             }
@@ -88,7 +103,11 @@ fun Admin(context: Context) {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            Toast.makeText(context, "Fail to get data.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getText(R.string.text_generic_error),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     })
 
@@ -134,11 +153,11 @@ fun Admin(context: Context) {
                     Button(
                         modifier = Modifier.weight(1f),
                         onClick = {
-                            databaseReferenceCompetitors.child("${it.index.toString()}/votes")
+                            databaseReferenceCompetitors.child("${it.index.toString()}/$VOTES")
                                 .setValue(0)
                         }
                     ) {
-                        Text(text = "Zerar Votos")
+                        Text(text = context.getText(R.string.text_reset_votes).toString())
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     val walled = it.walled
@@ -146,7 +165,7 @@ fun Admin(context: Context) {
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val child =
-                                databaseReferenceCompetitors.child("${it.index.toString()}/walled")
+                                databaseReferenceCompetitors.child("${it.index.toString()}/$WALLED")
                             if (walled == true) {
                                 child.setValue(false)
                             } else {
@@ -156,9 +175,9 @@ fun Admin(context: Context) {
                     ) {
                         Text(
                             text = if (walled == true) {
-                                "Desemparedar"
+                                context.getText(R.string.text_remove_from_wall).toString()
                             } else {
-                                "Emparedar"
+                                context.getText(R.string.text_put_on_wall).toString()
                             }
                         )
                     }

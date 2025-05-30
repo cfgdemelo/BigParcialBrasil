@@ -2,11 +2,13 @@ package com.cfgdemelo.bigparcialbrasil
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +42,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.COMPETITORS
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.FOOTER
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.INDEX
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.MESSAGE
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.MESSAGES
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.NAME
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.PHOTO
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.SUBTITLE
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.TITLE
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.VOTES
+import com.cfgdemelo.bigparcialbrasil.MainActivity.Companion.WALLED
 import com.cfgdemelo.bigparcialbrasil.data.Messages
 import com.cfgdemelo.bigparcialbrasil.data.Walled
 import com.cfgdemelo.bigparcialbrasil.ui.theme.BigParcialBrasilTheme
@@ -56,26 +69,37 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BigParcialBrasilTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
-                    // on below line we are specifying modifier and color for our app
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // on the below line we are specifying the theme as the scaffold.
                     Scaffold(
                     ) {
                         FirebaseUI(LocalContext.current)
-                        // on below line we are calling method to display UI
                     }
                 }
             }
         }
     }
+
+    companion object {
+        const val COMPETITORS = "competitors"
+        const val MESSAGES = "messages"
+        const val INDEX = "index"
+        const val NAME = "name"
+        const val PHOTO = "photo"
+        const val VOTES = "votes"
+        const val WALLED = "walled"
+        const val TITLE = "title"
+        const val SUBTITLE = "subtitle"
+        const val FOOTER = "footer"
+        const val MESSAGE = "message"
+    }
 }
 
 @Composable
 fun FirebaseUI(context: Context) {
+    var easterEggCounter = 10
     val walled = remember {
         mutableStateOf(ArrayList<Walled>())
     }
@@ -84,21 +108,21 @@ fun FirebaseUI(context: Context) {
     }
 
     val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReferenceCompetitors = firebaseDatabase.getReference("competitors")
-    val databaseReferenceMessages = firebaseDatabase.getReference("messages")
+    val databaseReferenceCompetitors = firebaseDatabase.getReference(COMPETITORS)
+    val databaseReferenceMessages = firebaseDatabase.getReference(MESSAGES)
 
     databaseReferenceCompetitors.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val value = snapshot.value as ArrayList<HashMap<String, Any>>
             val walledList = arrayListOf<Walled>()
             value.forEach {
-                if (it["walled"] == true) {
+                if (it[WALLED] == true) {
                     walledList.add(
                         Walled(
-                            index = it["index"].toString().toInt(),
-                            name = it["name"].toString(),
-                            photo = it["photo"].toString(),
-                            votes = it["votes"].toString().toInt()
+                            index = it[INDEX].toString().toInt(),
+                            name = it[NAME].toString(),
+                            photo = it[PHOTO].toString(),
+                            votes = it[VOTES].toString().toInt()
                         )
                     )
                 }
@@ -108,7 +132,11 @@ fun FirebaseUI(context: Context) {
         }
 
         override fun onCancelled(error: DatabaseError) {
-            Toast.makeText(context, "Fail to get data.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getText(R.string.text_generic_error),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     })
 
@@ -116,53 +144,73 @@ fun FirebaseUI(context: Context) {
         override fun onDataChange(snapshot: DataSnapshot) {
             val value = snapshot.value as HashMap<String, String>
             messages.value = Messages(
-                title = value["title"],
-                subtitle = value["subtitle"],
-                footer = value["footer"],
-                message = value["message"]
+                title = value[TITLE],
+                subtitle = value[SUBTITLE],
+                footer = value[FOOTER],
+                message = value[MESSAGE]
             )
         }
 
         override fun onCancelled(error: DatabaseError) {
-            Toast.makeText(context, "Fail to get data.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getText(R.string.text_generic_error),
+                Toast.LENGTH_SHORT
+            ).show()
         }
-
     })
 
     val state = rememberScrollState()
 
-    // on below line creating a column
-    // to display our retrieved text.
     Column(
-        // adding modifier for our column
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(state),
-        // on below line adding vertical and
-        // horizontal alignment for column.
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // on below line adding a spacer.
         Spacer(modifier = Modifier.height(20.dp))
-        // on below line adding a text
-        // to display retrieved message.
-        Text(
-            // on below line setting text
-            // message from message variable.
-            text = messages.value.title ?: "",
-            fontSize = 20.sp,
-            fontStyle = FontStyle.Normal,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.primary
-        )
+        Row(
+            Modifier.clickable(enabled = true) {
+                easterEggCounter--
+
+                when (easterEggCounter) {
+                    in 1..5 -> {
+                        Toast.makeText(
+                            context,
+                            context.resources.getQuantityString(
+                                R.plurals.text_remaining_clicks,
+                                easterEggCounter,
+                                easterEggCounter
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    0 -> {
+                        context.startActivity(
+                            Intent(
+                                context,
+                                AdminEntry::class.java
+                            )
+                        )
+                    }
+                }
+            }
+        ) {
+            Text(
+                text = messages.value.title ?: "",
+                fontSize = 20.sp,
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
         Spacer(modifier = Modifier.height(20.dp))
         Text(
-            // on below line setting text
-            // message from message variable.
             text = messages.value.subtitle ?: "",
             fontSize = 18.sp,
             fontStyle = FontStyle.Normal,
@@ -176,9 +224,9 @@ fun FirebaseUI(context: Context) {
             list = getWalledPercentages(list)
             list.forEach {
                 Row(
-                            modifier = Modifier
-                                .height(80.dp)
-                                .fillMaxWidth(),
+                    modifier = Modifier
+                        .height(80.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -239,7 +287,7 @@ fun FirebaseUI(context: Context) {
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val votes = it.votes ?: 0
-                            databaseReferenceCompetitors.child("${it.index.toString()}/votes")
+                            databaseReferenceCompetitors.child("${it.index.toString()}/$VOTES")
                                 .setValue(votes + 1)
                         }
                     ) {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BPB24</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="title_activity_admin_entry">AdminEntry</string>
+    <string name="title_activity_admin_messages">AdminMessagesActivity</string>
+
+    <string name="text_generic_error">Fail to get data.</string>
+    <string name="text_reset_votes">Reset Votes</string>
+    <string name="text_remove_from_wall">Remove from Wall</string>
+    <string name="text_put_on_wall">Put on Wall</string>
+    <string name="text_participants">Participants</string>
+    <string name="text_messages">Messages</string>
+    <string name="text_user_view">User View</string>
+    <string name="text_title">Title</string>
+    <string name="text_subtitle">Subtitle</string>
+    <string name="text_save">Save</string>
+    <string name="text_footer">Footer</string>
+    <string name="text_message">Message</string>
+    <plurals name="text_remaining_clicks">
+        <item quantity="one">%d click remaining to become an admin</item>
+        <item quantity="other">%d remaining clicks to become an admin</item>
+    </plurals>
+</resources>

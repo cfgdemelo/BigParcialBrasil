@@ -4,4 +4,22 @@
     <string name="title_activity_admin">AdminActivity</string>
     <string name="title_activity_admin_entry">AdminEntry</string>
     <string name="title_activity_admin_messages">AdminMessagesActivity</string>
+    
+    <string name="text_generic_error">Falha ao buscar informações</string>
+    <string name="text_reset_votes">Zerar Votos</string>
+    <string name="text_remove_from_wall">Desemparedar</string>
+    <string name="text_put_on_wall">Emparedar</string>
+    <string name="text_participants">Participantes</string>
+    <string name="text_messages">Mensagens</string>
+    <string name="text_user_view">Visão do Usuário</string>
+    <string name="text_title">Título</string>
+    <string name="text_subtitle">Subtítulo</string>
+    <string name="text_save">Salvar</string>
+    <string name="text_footer">Footer</string>
+    <string name="text_message">Mensagem</string>
+    <plurals name="text_remaining_clicks">
+        <item quantity="one">Falta %d clique para você virar admin</item>
+        <item quantity="other">Faltam %d cliques para você virar admin</item>
+    </plurals>
 </resources>
+

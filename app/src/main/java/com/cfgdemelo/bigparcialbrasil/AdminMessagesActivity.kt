@@ -1,5 +1,6 @@
 package com.cfgdemelo.bigparcialbrasil
 
+import com.cfgdemelo.bigparcialbrasil.AdminMessagesActivity.Companion.MESSAGES
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
@@ -18,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,6 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.cfgdemelo.bigparcialbrasil.AdminMessagesActivity.Companion.FOOTER
+import com.cfgdemelo.bigparcialbrasil.AdminMessagesActivity.Companion.MESSAGE
+import com.cfgdemelo.bigparcialbrasil.AdminMessagesActivity.Companion.SUBTITLE
+import com.cfgdemelo.bigparcialbrasil.AdminMessagesActivity.Companion.TITLE
 import com.cfgdemelo.bigparcialbrasil.ui.theme.BigParcialBrasilTheme
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -43,7 +47,6 @@ class AdminMessagesActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BigParcialBrasilTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -53,12 +56,20 @@ class AdminMessagesActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+        const val MESSAGES = "messages"
+        const val TITLE = "title"
+        const val SUBTITLE = "subtitle"
+        const val FOOTER = "footer"
+        const val MESSAGE = "message"
+    }
 }
 
 @Composable
 fun Messages(context: Context) {
     val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReferenceMessages = firebaseDatabase.getReference("messages")
+    val databaseReferenceMessages = firebaseDatabase.getReference(MESSAGES)
     val messages = remember {
         mutableStateOf(com.cfgdemelo.bigparcialbrasil.data.Messages())
     }
@@ -67,17 +78,20 @@ fun Messages(context: Context) {
         override fun onDataChange(snapshot: DataSnapshot) {
             val value = snapshot.value as HashMap<String, String>
             messages.value = com.cfgdemelo.bigparcialbrasil.data.Messages(
-                title = value["title"],
-                subtitle = value["subtitle"],
-                footer = value["footer"],
-                message = value["message"]
+                title = value[TITLE],
+                subtitle = value[SUBTITLE],
+                footer = value[FOOTER],
+                message = value[MESSAGE]
             )
         }
 
         override fun onCancelled(error: DatabaseError) {
-            Toast.makeText(context, "Fail to get data.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getText(R.string.text_generic_error),
+                Toast.LENGTH_SHORT
+            ).show()
         }
-
     })
     val state = rememberScrollState()
 
@@ -90,6 +104,7 @@ fun Messages(context: Context) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        //Title
         Spacer(modifier = Modifier.height(20.dp))
         Row(
             modifier = Modifier
@@ -100,18 +115,126 @@ fun Messages(context: Context) {
         ) {
             var text by remember { mutableStateOf("") }
             text = messages.value.title ?: ""
+            var newText by remember { mutableStateOf("") }
             TextField(
-                label = { Text(text = "Título") },
+                label = { Text(text = context.getText(R.string.text_title).toString()) },
                 modifier = Modifier.weight(2f),
-                value = text,
-                onValueChange = { text = it })
+                placeholder = { Text(text = text) },
+                value = newText,
+                onValueChange = {
+                    newText = it
+                },
+                enabled = true,
+                readOnly = false
+            )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
-                    databaseReferenceMessages.child("title").setValue(text)
+                    databaseReferenceMessages.child(TITLE).setValue(newText)
                 }
             ) {
-                Text(text = "Salvar")
+                Text(text = context.getText(R.string.text_save).toString())
+            }
+        }
+
+        //Subtitle
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .height(80.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            var text by remember { mutableStateOf("") }
+            text = messages.value.subtitle ?: ""
+            var newText by remember { mutableStateOf("") }
+            TextField(
+                label = { Text(text = context.getText(R.string.text_subtitle).toString()) },
+                modifier = Modifier.weight(2f),
+                placeholder = { Text(text = text) },
+                value = newText,
+                onValueChange = {
+                    newText = it
+                },
+                enabled = true,
+                readOnly = false
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    databaseReferenceMessages.child(SUBTITLE).setValue(newText)
+                }
+            ) {
+                Text(text = context.getText(R.string.text_save).toString())
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        //Footer
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .height(80.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            var text by remember { mutableStateOf("") }
+            text = messages.value.footer ?: ""
+            var newText by remember { mutableStateOf("") }
+            TextField(
+                label = { Text(text = context.getText(R.string.text_footer).toString()) },
+                modifier = Modifier.weight(2f),
+                placeholder = { Text(text = text) },
+                value = newText,
+                onValueChange = {
+                    newText = it
+                },
+                enabled = true,
+                readOnly = false
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    databaseReferenceMessages.child(FOOTER).setValue(newText)
+                }
+            ) {
+                Text(text = context.getText(R.string.text_save).toString())
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        //Message
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier
+                .height(80.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            var text by remember { mutableStateOf("") }
+            text = messages.value.message ?: ""
+            var newText by remember { mutableStateOf("") }
+            TextField(
+                label = { Text(text = context.getText(R.string.text_message).toString()) },
+                modifier = Modifier.weight(2f),
+                placeholder = { Text(text = text) },
+                value = newText,
+                onValueChange = {
+                    newText = it
+                },
+                enabled = true,
+                readOnly = false
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = {
+                    databaseReferenceMessages.child(MESSAGE).setValue(newText)
+                }
+            ) {
+                Text(text = context.getText(R.string.text_save).toString())
             }
         }
         Spacer(modifier = Modifier.height(20.dp))

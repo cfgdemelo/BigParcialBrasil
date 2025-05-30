@@ -25,7 +25,6 @@ class AdminEntry : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BigParcialBrasilTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -52,7 +51,7 @@ fun AdminOptions(context: Context) {
                     )
                 )
             }) {
-                Text(text = "Participantes")
+                Text(text = context.getText(R.string.text_participants).toString())
             }
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -64,7 +63,19 @@ fun AdminOptions(context: Context) {
                     )
                 )
             }) {
-                Text(text = "Mensagens")
+                Text(text = context.getText(R.string.text_messages).toString())
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            Button(onClick = {
+                context.startActivity(
+                    Intent(
+                        context,
+                        MainActivity::class.java
+                    )
+                )
+            }) {
+                Text(text = context.getText(R.string.text_user_view).toString())
             }
         }
     }
